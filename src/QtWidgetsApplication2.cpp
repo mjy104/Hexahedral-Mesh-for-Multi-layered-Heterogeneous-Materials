@@ -7,6 +7,13 @@
 #include "QtWidgetsApplication2.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QLayout.h>
+#include <qradiobutton.h>
+#include <qtablewidget.h>
+#include <qlineedit.h>
+#include <qlabel.h>
+#include <qspinbox.h>
+
 #include<vtkSmartPointer.h>
 #include <vtkLight.h>
 #include<vtkConeSource.h>
@@ -270,16 +277,6 @@ QtWidgetsApplication2::QtWidgetsApplication2(QWidget *parent)
 {
     ui.setupUi(this);
     this->setWindowTitle("多层异质材料的力学性能测量");
-    ui.output_text->setChecked(1);
-    ui.tableWidget->clear();
-
-    ui.tableWidget->setColumnCount(3);//只设置列数
-    ui.tableWidget->setHorizontalHeaderLabels(QStringList() << "材料" << "杨氏模量" << "泊松比");
-    ui.tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);//列宽自动分配
-    ui.tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);//可以手动调整
-    ui.tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);//整行选项
-    ui.tableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);//禁止修改
-    ui.tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);//可以单选
 
     //创建菜单栏
     QMenuBar* menuBar = new QMenuBar(this);
@@ -401,76 +398,162 @@ QtWidgetsApplication2::QtWidgetsApplication2(QWidget *parent)
 
     connect(ui.pushButton_2, &QPushButton::clicked, this, &QtWidgetsApplication2::PushedButton);
     connect(ui.input_picture, &QPushButton::clicked, this, &QtWidgetsApplication2::input_picture);
-    connect(ui.InputButton, &QPushButton::clicked, this, &QtWidgetsApplication2::inputbutton);
-    connect(ui.deletButton, &QPushButton::clicked, this, &QtWidgetsApplication2::deletebutton); 
-
-
+    connect(ui.SetMaterial, &QPushButton::clicked, this, &QtWidgetsApplication2::input_material);
+    connect(ui.Set_parameter, &QPushButton::clicked, this, &QtWidgetsApplication2::set_parameter);
 }
 
 QtWidgetsApplication2::~QtWidgetsApplication2()
 {}
 
+void QtWidgetsApplication2::set_parameter()
+{
+    QDialog* dialog = new QDialog(this);
+    dialog->setWindowTitle("New Dialog");
+    dialog->setFixedSize(400, 200);
+    dialog->setSizeGripEnabled(false);
+    
+    QHBoxLayout* layout0 = new QHBoxLayout();
+    QRadioButton* radioButton = new QRadioButton("输出text文件", dialog);
+    radioButton->setChecked(true);
+    QLineEdit* lineEdit = new QLineEdit(dialog);
+    // 连接单选按钮的点击信号
+    connect(radioButton, &QRadioButton::toggled, [=](bool checked) {
+        if (checked) {
+            lineEdit->show();
+        }
+        else {
+            lineEdit->hide();
+        }
+        });
+    layout0->addWidget(radioButton);
+    layout0->addWidget(lineEdit);
+    QHBoxLayout* layout1 = new QHBoxLayout();
+    // 创建三个QLabel和三个QSpinBox
+    QLabel* label1 = new QLabel("网格最大值:", dialog);
+    QSpinBox* spinBox1 = new QSpinBox(dialog);
+    layout1->addWidget(label1);
+    layout1->addWidget(spinBox1);
+    QHBoxLayout* layout2 = new QHBoxLayout();
+    QLabel* label2 = new QLabel("网格最小值:", dialog);
+    QSpinBox* spinBox2 = new QSpinBox(dialog);
+    layout2->addWidget(label2);
+    layout2->addWidget(spinBox2);
+    QHBoxLayout* layout3 = new QHBoxLayout();
+    QLabel* label3 = new QLabel("切片间距:", dialog);
+    QSpinBox* spinBox3 = new QSpinBox(dialog);
+    layout3->addWidget(label3);
+    layout3->addWidget(spinBox3);
+    QVBoxLayout* layout = new QVBoxLayout();
+    layout->addLayout(layout0);
+    layout->addLayout(layout1);
+    layout->addLayout(layout2);
+    layout->addLayout(layout3);
+    // 创建一个确认按钮
+    QPushButton* okButton = new QPushButton("确认", this);
+    // 连接按钮的点击信号到槽函数
+    connect(okButton, &QPushButton::clicked, this, [=] {
+        this->max_lenth = spinBox1->value();
+        this->min_lenth = spinBox2->value();
+        this->interval = spinBox3->value();
+        this->textpath = lineEdit->text().toStdString();
+        this->istextpath = radioButton->isChecked();
+        dialog->close();
+        });
+    layout->addWidget(okButton);
+    dialog->setLayout(layout);
+    dialog->adjustSize();
+    dialog->exec();
+}
 
+void QtWidgetsApplication2::input_material()
+{
+    // 创建 QDialog 对象
+    QDialog* dialog = new QDialog(this);
+    // 创建 QTableWidget 并设置属性和内容
+    QTableWidget* tableWidget = new QTableWidget(dialog);
+    tableWidget->setColumnCount(3);
+    tableWidget->setHorizontalHeaderLabels(QStringList() << "材料" << "杨氏模量" << "泊松比");
+    tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);//列宽自动分配
+    tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);//可以手动调整
+    tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);//整行选项
+    tableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);//禁止修改
+    tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);//可以单选
+
+    // 将 QTableWidget 添加到布局中
+    QVBoxLayout* layout = new QVBoxLayout(dialog);
+    layout->addWidget(tableWidget);
+
+    // 设置 QDialog 的布局
+    dialog->setLayout(layout);
+
+    // 设置对话框标题
+    dialog->setWindowTitle("Dialog Title");
+
+    // 添加对话框内容，可以根据需求添加控件和布局
+    // 创建两个按钮并设置文本
+    QPushButton* button1 = new QPushButton("添加材料", dialog);
+    QPushButton* button2 = new QPushButton("删除材料", dialog);
+    // 创建一个确认按钮
+    QPushButton* okButton = new QPushButton("确认", this);
+    layout->addWidget(button1);
+    layout->addWidget(button2);
+    layout->addWidget(okButton);
+    // 设置 QDialog 的布局
+    dialog->setLayout(layout);
+
+    // 连接按钮的点击信号到槽函数
+    connect(button1, &QPushButton::clicked, [tableWidget]() {
+        int rowCont = tableWidget->rowCount();
+        tableWidget->insertRow(rowCont);
+        });
+
+    connect(button2, &QPushButton::clicked, [tableWidget]() {
+        int rowIndex = tableWidget->currentRow();
+        tableWidget->removeRow(rowIndex);
+        });
+    connect(okButton, &QPushButton::clicked, this, [=] {
+        material_container.clear();
+        int rowCount = tableWidget->rowCount();
+        int columnCount = tableWidget->columnCount();
+        
+        for (int row = 0; row < rowCount; ++row)
+        {
+            std::vector<std::string> rowData;
+            for (int col = 0; col < columnCount; ++col)
+            {
+                QTableWidgetItem* item = tableWidget->item(row, col);
+                if (item != nullptr)
+                {
+                    rowData.push_back(item->text().toStdString());
+                }
+                else
+                {
+                    rowData.push_back(""); // 如果单元格为空，添加空字符串
+                }
+            }
+            material_container.push_back(rowData);
+        }
+        dialog->close();
+        });
+    // 显示对话框
+    dialog->exec(); // 使用 exec() 方法模态显示对话框，阻塞其他窗口操作
+
+    // 如果需要非模态显示对话框，使用 show() 方法
+    // dialog->show();
+    
+    // 释放对话框资源
+    delete dialog;
+}
 
 void QtWidgetsApplication2::PushedButton()
 {
-    //测试案例
-    //vtkSmartPointer<vtkCylinderSource> cylinder = vtkSmartPointer<vtkCylinderSource>::New();
-    //cylinder->SetHeight(3);
-    //cylinder->SetRadius(1);
-    //cylinder->SetResolution(10);//设置柱体横截面的等边多边形的边数
-
-    //vtkSmartPointer<vtkPolyDataMapper> cylinderMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    //cylinderMapper->SetInputConnection(cylinder->GetOutputPort());
-
-    //vtkSmartPointer<vtkActor> cylinderActor = vtkSmartPointer<vtkActor>::New();
-    //cylinderActor->SetMapper(cylinderMapper);
-
-    //vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-    //transform->PostMultiply();//表示使用右乘变换矩阵的方式
-    //transform->RotateX(90);//表示设置绕Z轴旋转40度
-    //transform->Translate(-10, 0, 0);//设置平移大小
-    //cylinderActor->SetUserTransform(transform);
-
-    //vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
-    //vtkSmartPointer<vtkLight> myLight1 = vtkSmartPointer<vtkLight>::New();
-    //myLight1->SetColor(1, 0, 0);
-    //myLight1->SetPosition(0, 0, 1);
-    //myLight1->SetFocalPoint(renderer->GetActiveCamera()->GetFocalPoint());
-    //renderer->AddLight(myLight1);
-
-    //vtkSmartPointer<vtkLight> myLight2 = vtkSmartPointer<vtkLight>::New();
-    //myLight2->SetColor(0, 0, 1);
-    //myLight2->SetPosition(0, 0, -1);
-    //myLight2->SetFocalPoint(renderer->GetActiveCamera()->GetFocalPoint());
-    //renderer->AddLight(myLight2);
-
-    //renderer->AddActor(cylinderActor);//将vtkprop类型的对象添加到渲染场景中
-    //renderer->SetBackground(0.1, 0.2, 0.4);//设置R、G、B的格式
-
-    //ui.qvtkWidget->GetRenderWindow()->AddRenderer(renderer); //替代vtkRenderWindow
-    //vtkSmartPointer<vtkRenderWindowInteractor> iren = ui.qvtkWidget->GetRenderWindow()->GetInteractor();
-    //iren->SetRenderWindow(ui.qvtkWidget->GetRenderWindow());
-
-    ////控制相机对物体作旋转、放大、缩小操作
-    //vtkSmartPointer<vtkInteractorStyleTrackballCamera> style = vtkSmartPointer<vtkInteractorStyleTrackballCamera>::New();
-    //iren->SetInteractorStyle(style);
-
-    ///*               导入数据，添加变量条等程序                */
-    ////刷新渲染
-    //ui.qvtkWidget->GetRenderWindow()->Render();
-    ////初始化交互器
-    //iren->Initialize();
-    ////启动交互器
-    //iren->Start();
-    
     //unsigned int max_length = 32;
     //unsigned int min_length = 32;
     //unsigned int interval = 1; //图片间隔设置为1
 
-    int max_length = ui.spinBox->value();
-    int min_length = ui.spinBox_2->value();
-    int interval = ui.spinBox_3->value();
+    int max_length = this->max_lenth;
+    int min_length = this->min_lenth;
+    int interval = this->interval;
 
     //获取txt
     vector<Hexahedral3D*> temp;
@@ -559,7 +642,7 @@ void QtWidgetsApplication2::PushedButton()
 
 
 #if 1
-    string material = ui.tableWidget->item(0, 0)->text().toStdString();
+    string material = material_container[0][0];
         for (int i = 0; i < My_Tree.m_node1.size(); i++)
         {
             vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
@@ -571,7 +654,7 @@ void QtWidgetsApplication2::PushedButton()
             //text
             temp.push_back(My_Tree.nodes[i]);
         }
-        material = ui.tableWidget->item(1, 0)->text().toStdString();
+        material = material_container[1][0];
         for (int i = 0; i < My_Tree.m_node2.size(); i++)
         {
             vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
@@ -583,7 +666,7 @@ void QtWidgetsApplication2::PushedButton()
             //text
             temp.push_back(My_Tree.nodes[i]);
         }
-        material = ui.tableWidget->item(2, 0)->text().toStdString();
+        material = material_container[2][0];
         for (int i = 0; i < My_Tree.m_node3.size(); i++)
         {
             vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
@@ -600,10 +683,10 @@ void QtWidgetsApplication2::PushedButton()
     ////输出txt
     //string path1 = "D:\\picture\\CTpicture\\test2.txt";
     ////CreatTxt(path1, My_Tree.m_node1, My_Tree.m_node2, My_Tree.m_node3);
-    if (ui.output_text->isChecked())
+    if (this->istextpath)
     {
         //获取txt
-        String path = ui.textpath->text().toStdString();//输入格式：.../文件名字.txt
+        String path = this->textpath;//输入格式：.../文件名字.txt
         CreatTxt(path, My_Tree.m_node1, My_Tree.m_node2, My_Tree.m_node3);
         //输出日志
         datetime = QTime::currentTime();
@@ -857,8 +940,6 @@ void QtWidgetsApplication2::input_picture()
             }
         }
 
-
-
         //将体数据转换为imagedata类型
         int extent[6] = { 0,m_Width - 1,0,m_Height - 1,0,m_Depth - 1 };//取值范围
         double spacing[3] = { distance1, distance2, distance3 };//像素点之间的距离
@@ -972,17 +1053,4 @@ void QtWidgetsApplication2::input_picture()
         mesg.warning(this, "警告", "打开图片失败!");
         return;
     }*/
-}
-
-void QtWidgetsApplication2::deletebutton()
-{
-    int rowIndex = ui.tableWidget->currentRow();
-    ui.tableWidget->removeRow(rowIndex);
-}
-
-void QtWidgetsApplication2::inputbutton()
-{
-    int RowCont;
-    RowCont = ui.tableWidget->rowCount();
-    ui.tableWidget->insertRow(RowCont);
 }

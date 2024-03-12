@@ -24,28 +24,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>280</y>
-      <width>451</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>输出txt路径：</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="textpath"/>
-     </item>
-    </layout>
-   </widget>
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
@@ -58,39 +36,13 @@
     <property name="title">
      <string>控制栏</string>
     </property>
-    <widget class="QPushButton" name="deletButton">
-     <property name="geometry">
-      <rect>
-       <x>380</x>
-       <y>40</y>
-       <width>91</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>删除材料</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="InputButton">
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>40</y>
-       <width>91</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>添加材料</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="pushButton_2">
      <property name="geometry">
       <rect>
-       <x>140</x>
-       <y>40</y>
-       <width>91</width>
-       <height>31</height>
+       <x>280</x>
+       <y>60</y>
+       <width>131</width>
+       <height>61</height>
       </rect>
      </property>
      <property name="text">
@@ -100,86 +52,41 @@
     <widget class="QPushButton" name="input_picture">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>40</y>
-       <width>91</width>
-       <height>31</height>
+       <x>60</x>
+       <y>60</y>
+       <width>131</width>
+       <height>61</height>
       </rect>
      </property>
      <property name="text">
       <string>输入</string>
      </property>
     </widget>
-    <widget class="QTableWidget" name="tableWidget">
+    <widget class="QPushButton" name="SetMaterial">
      <property name="geometry">
       <rect>
-       <x>190</x>
-       <y>90</y>
-       <width>281</width>
-       <height>151</height>
+       <x>60</x>
+       <y>190</y>
+       <width>131</width>
+       <height>61</height>
       </rect>
+     </property>
+     <property name="text">
+      <string>设置材料</string>
      </property>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
+    <widget class="QPushButton" name="Set_parameter">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>130</y>
-       <width>170</width>
-       <height>102</height>
+       <x>280</x>
+       <y>190</y>
+       <width>131</width>
+       <height>61</height>
       </rect>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QRadioButton" name="output_text">
-        <property name="text">
-         <string>输出txt文本</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>网格最大值</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBox"/>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>网格最小值</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBox_2"/>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>切片间距</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBox_3"/>
-        </item>
-       </layout>
-      </item>
-     </layout>
+     <property name="text">
+      <string>设置参数</string>
+     </property>
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_2">
@@ -219,7 +126,6 @@
     </property>
    </widget>
    <zorder>groupBox</zorder>
-   <zorder>layoutWidget</zorder>
    <zorder>groupBox_2</zorder>
    <zorder>history_output</zorder>
    <zorder>progressBar</zorder>

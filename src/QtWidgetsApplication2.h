@@ -21,19 +21,22 @@ public:
 
     void input_picture();
 
-    void deletebutton();
+    void input_material();
 
-    void inputbutton();
-
+    void set_parameter();
     //vtkSmartPointer<vtkActor> set_material_color(vtkSmartPointer<vtkActor>& hexactor, string material);
     //Ui::MainWindow ui;
-private:
-    HexDisplay hexactor;
-
-    QStringList strPathList;//读取图片路径
-    QTime datetime;//时间
-    //unordered_map<string, vector<double>> umap;//用来储存不同材料对应得RGB颜色属性
+public:
+    vector<vector<string>> material_container;
     unsigned int max_lenth;//网格最大值
     unsigned int min_lenth;//网格最小值
     unsigned int interval;//图片间隔
+    string textpath;//text路径
+    bool istextpath;
+private:
+    HexDisplay hexactor;
+    QStringList strPathList;//读取图片路径
+    QTime datetime;//时间
+    //unordered_map<string, vector<double>> umap;//用来储存不同材料对应得RGB颜色属性
+
 };
